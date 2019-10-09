@@ -1,0 +1,12 @@
+D:\tutorials projects\Core1\src\Evento.Infrastructure\bin\Debug\netstandard2.0\Evento.Infrastructure.deps.json
+D:\tutorials projects\Core1\src\Evento.Infrastructure\bin\Debug\netstandard2.0\Evento.Infrastructure.dll
+D:\tutorials projects\Core1\src\Evento.Infrastructure\bin\Debug\netstandard2.0\Evento.Infrastructure.pdb
+D:\tutorials projects\Core1\src\Evento.Infrastructure\bin\Debug\netstandard2.0\Evento.Core.dll
+D:\tutorials projects\Core1\src\Evento.Infrastructure\bin\Debug\netstandard2.0\Evento.Core.pdb
+D:\tutorials projects\Core1\src\Evento.Infrastructure\obj\Debug\netstandard2.0\Evento.Infrastructure.csprojAssemblyReference.cache
+D:\tutorials projects\Core1\src\Evento.Infrastructure\obj\Debug\netstandard2.0\Evento.Infrastructure.csproj.CoreCompileInputs.cache
+D:\tutorials projects\Core1\src\Evento.Infrastructure\obj\Debug\netstandard2.0\Evento.Infrastructure.AssemblyInfoInputs.cache
+D:\tutorials projects\Core1\src\Evento.Infrastructure\obj\Debug\netstandard2.0\Evento.Infrastructure.AssemblyInfo.cs
+D:\tutorials projects\Core1\src\Evento.Infrastructure\obj\Debug\netstandard2.0\Evento.Infrastructure.csproj.CopyComplete
+D:\tutorials projects\Core1\src\Evento.Infrastructure\obj\Debug\netstandard2.0\Evento.Infrastructure.dll
+D:\tutorials projects\Core1\src\Evento.Infrastructure\obj\Debug\netstandard2.0\Evento.Infrastructure.pdb
