@@ -32,7 +32,7 @@ namespace Evento.Api
         public void ConfigureServices(IServiceCollection services)
         {
            /// dfs
-           /// services.AddAuthorization(); // można rozbudować o role lub polityki bezpieczeństwa
+            services.AddAuthorization( a => a.AddPolicy("HasAdminRole", p => p.RequireRole("admin"))); // można rozbudować o role lub polityki bezpieczeństwa
             /*
              services.AddAuthorization(options => 
             {
