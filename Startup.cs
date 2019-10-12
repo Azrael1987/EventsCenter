@@ -89,7 +89,7 @@ namespace Evento.Api
             });
 
 
-            services.AddScoped<IUserService, UserService>();
+         //   services.AddScoped<IUserService, UserService>();
             services.AddMvc().AddJsonOptions(x => x.SerializerSettings.Formatting = Formatting.Indented);
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IUserRepository, UserRepository>();

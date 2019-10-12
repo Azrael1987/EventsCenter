@@ -36,16 +36,14 @@ namespace Evento.Api.Controllers
         /// </summary>
         /// <param name="eventId"></param>
         /// <returns> Szczegóły wydarzenia </returns>
-
         [HttpGet("{eventId}")]
         public async Task<IActionResult> GetDetails(Guid eventId)
-    {
+        {
             var @event = await _eventService.GetAsync(eventId);
-            if(@event == null)
+            if (@event == null)
             {
                 return NotFound(); // 404
             }
-
             return Json(@event);
         }
 
@@ -54,7 +52,7 @@ namespace Evento.Api.Controllers
         {
             command.EventId = Guid.NewGuid();
             await _eventService.CreateAsync(command.EventId, command.Name, command.Description, command.StartDate, command.EndDate);
-            await _eventService.AddTicketsAsync(command.EventId, command.TicketsAmount, command.Price);
+            await _eventService.AddTicketsAsync(command.EventId, command.Tickets, command.Price);
             return Created($"/events/{command.EventId}", null); // 201
         }
 
@@ -67,7 +65,6 @@ namespace Evento.Api.Controllers
         public async Task<IActionResult> Put(Guid eventId, [FromBody]UpdateEvent command)
         {
             await _eventService.UpdateAsync(eventId, command.Name, command.Description);
-
             return NoContent(); // 204
         }
 
@@ -82,7 +79,7 @@ namespace Evento.Api.Controllers
             await _eventService.DeleteAsync(eventId);
             return NoContent();
         }
-        //filmik z rodziału 5.11) zabezpieczneie dostepu z atrybutem Authorize
+        //filmik z rodziału 5.11) zabezpieczneie dostepu z policy
 
         // narzedzia do testowania URL - fiddler, postman, curl, SoupUi
 
