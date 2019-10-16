@@ -1,5 +1,4 @@
 ﻿using Evento.Core.Repositories;
-using Evento.Core.Repository;
 using Evento.Ifrastructure.Repositories;
 using Evento.Infrastructure.Handlers;
 using Evento.Infrastructure.Mappers;
