@@ -1,4 +1,5 @@
-﻿using Evento.Infrastructure.Commands.Users;
+﻿using Evento.Core.Domain;
+using Evento.Infrastructure.Commands.Users;
 using Evento.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,12 @@ namespace Evento.Api.Controllers
     public class AccountController : ApiControllerBase
     {
         private IUserService _userService;
+        private ITicketService _ticketService;
 
-        public AccountController(IUserService userService)
+        public AccountController(IUserService userService, ITicketService ticketService)
         {
             _userService = userService;
+            _ticketService = ticketService;
         }
 
         /// <summary>
@@ -29,11 +32,16 @@ namespace Evento.Api.Controllers
         [Authorize]
         public async Task<IActionResult> Get() => Json(await _userService.GetAccountAsync(UserId));
 
+        /// <summary>
+        /// 
+        /// przykład:
+        ///     GET Account/tickets
+        /// </summary>
+        /// <returns> Kolekcja biletów dla danego użytkowanika </returns>
         [HttpGet("tickets")]
+        [Authorize]
         public async Task<IActionResult> GetTickets()
-        {
-            throw new NotImplementedException();
-        }
+            => Json(await _ticketService.GetTicktesForUserAsync(UserId));
 
         /// <summary>
         /// 

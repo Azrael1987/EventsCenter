@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -30,7 +31,6 @@ namespace Evento.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           /// dfs
             services.AddAuthorization( a => a.AddPolicy("HasAdminRole", p => p.RequireRole("admin"))); // można rozbudować o role lub polityki bezpieczeństwa
             /*
              services.AddAuthorization(options => 
@@ -55,10 +55,10 @@ namespace Evento.Api
 
           
             //  services.AddAuthentication(IISDefaults.AuthenticationScheme);
-            services.AddCors(); // dev z sidney
+            services.AddCors(); // dev z Sidney
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.Configure<JwtSettings>(Configuration.GetSection("Jwt"));
-            //  services.Configure<JwtSettings>(Configuration.GetSection("Jwt"));
+
 
             services.AddAuthentication(o =>
             {
@@ -75,7 +75,6 @@ namespace Evento.Api
                     ValidateIssuer = false, // true,
                     ValidateAudience = false, // true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["Jwt:Key"])), //nie UTF8
-                      //  IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["Jwt:Key"])), //nie UTF8
 
                     // d f s
                     //RequireExpirationTime = true,
@@ -86,9 +85,6 @@ namespace Evento.Api
               //  o.Audience = Configuration["Jwt:Issuer"];
               //  o.Authority = Configuration["Jwt:Issuer"];
             });
-
-
-         //   services.AddScoped<IUserService, UserService>();
             services.AddMvc().AddJsonOptions(x => x.SerializerSettings.Formatting = Formatting.Indented);
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
@@ -97,12 +93,19 @@ namespace Evento.Api
             services.AddScoped<ITicketService, TicketService>();
             services.AddSingleton(AutoMapperConfig.Initialize());
             services.AddSingleton<IJwtHandler, JwtHandler>();
-            // services.UseJwt
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggingBuilder builder, ILoggerFactory fact
+            )
         {
+          //  fact.AddConsole(Configuration.GetSection("Logging"));
+          //  fact.AddDebug();
+
+            builder.AddConsole();
+            builder.AddDebug();
+      
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -112,20 +115,6 @@ namespace Evento.Api
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            //tylko gdzie tego uzyć
-            var jwtSettings = app.ApplicationServices.GetServices<IOptions<JwtSettings>>();
-
-            //  przestarzałe
-            //app.UseJwtBearerAuthentication(new JwtBearerOptions
-            //{
-            //   AumaticAuthenticate = true,
-            //TokenValidationParameters = new TokenValidationParameters
-            //{
-            //    ValidateIssuer = jwtSettings.Value.Issuser,
-            //    ValidateAudience = false,
-            //    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.Value.Key))
-            //}
-            //});
 
             //dfs
             app.UseCors(c => c
@@ -134,8 +123,7 @@ namespace Evento.Api
             .AllowAnyHeader());
 
             app.UseHttpsRedirection();
-
-
+            
             app.UseAuthentication();
             app.UseMvc();
         }

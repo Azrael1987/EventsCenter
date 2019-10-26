@@ -47,7 +47,7 @@ namespace Evento.Api.Controllers
         // POST: api/Ticket
 
         // kup bilety
-        [HttpPost("purchase/{ticketId}")]
+        [HttpPost("purchase/{amount}")]
         public async Task<IActionResult> Post(Guid eventId, int amount)
         {
             await _ticketService.PurchaseTicketsAsync(UserId, eventId, amount);

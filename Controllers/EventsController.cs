@@ -83,7 +83,7 @@ namespace Evento.Api.Controllers
             await _eventService.DeleteAsync(eventId);
             return NoContent();
         }
-        //filmik z rodziału 5.11) zabezpieczneie dostepu z policy
+        //filmik z rodziału 7.2) loggi 
 
         // narzedzia do testowania URL - fiddler, postman, curl, SoupUi
 
