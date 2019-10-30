@@ -3,6 +3,7 @@ using Evento.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 //using Evento.Interface.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@ namespace Evento.Api.Controllers
     public class EventsController : ApiControllerBase
     {
         private readonly IEventService _eventService;
+        private readonly IMemoryCache _memoryCache;
         public EventsController(IEventService eventService)
         {
             _eventService = eventService;
