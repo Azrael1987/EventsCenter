@@ -82,6 +82,8 @@ namespace Evento.Api
             services.AddMemoryCache();
         }
 
+        // IoC - ninject, stractureMap, autofac
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env/*, ILoggingBuilder builder*/)
         {
