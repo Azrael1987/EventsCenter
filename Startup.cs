@@ -1,4 +1,6 @@
-﻿using Evento.Core.Repositories;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Evento.Core.Repositories;
 using Evento.Ifrastructure.Repositories;
 using Evento.Infrastructure.Handlers;
 using Evento.Infrastructure.Mappers;
@@ -15,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using NLog.Extensions.Logging;
 using NLog.Web;
+using System;
 using System.Text;
 
 namespace Evento.Api
@@ -27,9 +30,10 @@ namespace Evento.Api
         }
 
         public IConfiguration Configuration { get; }
+        public IContainer Container { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddAuthorization(a => a.AddPolicy("HasAdminRole", p => p.RequireRole("admin")));
 
@@ -37,7 +41,6 @@ namespace Evento.Api
             services.AddCors(); // dev z Sidney
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.Configure<JwtSettings>(Configuration.GetSection("Jwt"));
-
 
             services.AddAuthentication(o =>
             {
@@ -65,27 +68,38 @@ namespace Evento.Api
                 //  o.Authority = Configuration["Jwt:Issuer"];
             });
             services.AddMvc().AddJsonOptions(x => x.SerializerSettings.Formatting = Formatting.Indented);
-            services.AddScoped<IEventRepository, EventRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IEventService, EventService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ITicketService, TicketService>();
             services.AddSingleton(AutoMapperConfig.Initialize());
-            services.AddSingleton<IJwtHandler, JwtHandler>();
             services.AddLogging(logging =>
             {
                 logging.AddConsole();
                 logging.AddDebug();
                 logging.AddNLog();
-               
+
             });
             services.AddMemoryCache();
+
+            // IoC - autofac
+            var builder = new ContainerBuilder();
+            builder.Populate(services);
+            builder.RegisterType<EventRepository>().As<IEventRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<EventService>().As<IEventService>().InstancePerLifetimeScope();
+            builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
+            builder.RegisterType<TicketService>().As<ITicketService>().InstancePerLifetimeScope();
+            builder.RegisterType<JwtHandler>().As<IJwtHandler>().SingleInstance();
+
+            // poczytać o tym
+            // builder.RegisterAssemblyTypes();
+
+            Container = builder.Build();
+
+            return new AutofacServiceProvider(Container);
         }
 
         // IoC - ninject, stractureMap, autofac
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env/*, ILoggingBuilder builder*/)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime)
         {
             if (env.IsDevelopment())
             {
@@ -104,13 +118,14 @@ namespace Evento.Api
             .AllowAnyMethod()
             .AllowAnyHeader());
 
-          //  app.AddWebLog();
-          env.ConfigureNLog("nlog.config");
+            //  app.AddWebLog();
+            env.ConfigureNLog("nlog.config");
 
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseMvc();
+            applicationLifetime.ApplicationStopped.Register(() => Container.Dispose());
         }
     }
 }
