@@ -28,6 +28,8 @@ namespace Evento.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string name)
         {
+           // throw new ArgumentException($" test-joke");
+
             var events = await _eventService.BrowseAsync(name);
             return Json(events);
         }

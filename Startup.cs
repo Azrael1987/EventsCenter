@@ -20,6 +20,7 @@ using NLog.Extensions.Logging;
 using NLog.Web;
 using System;
 using System.Text;
+using Evento.Api.Framework;
 
 namespace Evento.Api
 {
@@ -103,7 +104,7 @@ namespace Evento.Api
         // IoC - ninject, stractureMap, autofac
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime)
+        public void Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime)
         {
             if (env.IsDevelopment())
             {
@@ -128,12 +129,13 @@ namespace Evento.Api
             app.UseHttpsRedirection();
 
             SeedDate(app);
+            app.UseErrorHandler();
             app.UseAuthentication();
             app.UseMvc();
             applicationLifetime.ApplicationStopped.Register(() => Container.Dispose());
 
         }
-        private void SeedDate(IApplicationBuilder appBuilder)
+        private void SeedDate(Microsoft.AspNetCore.Builder.IApplicationBuilder appBuilder)
         {
             var settings = appBuilder.ApplicationServices.GetService<IOptions<AppSettings>>();
             if (settings.Value.SeedDate)
