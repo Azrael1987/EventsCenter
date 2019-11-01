@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using NLog.Extensions.Logging;
@@ -41,6 +42,8 @@ namespace Evento.Api
             services.AddCors(); // dev z Sidney
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.Configure<JwtSettings>(Configuration.GetSection("Jwt"));
+            services.Configure<AppSettings>(Configuration.GetSection("App"));
+       //     services.Configure<AppSettings>(Configuration.GetSection("app"));
 
             services.AddAuthentication(o =>
             {
@@ -77,6 +80,7 @@ namespace Evento.Api
 
             });
             services.AddMemoryCache();
+            services.AddScoped<IDateInitializer, DateInitializer>();
 
             // IoC - autofac
             var builder = new ContainerBuilder();
@@ -87,7 +91,7 @@ namespace Evento.Api
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
             builder.RegisterType<TicketService>().As<ITicketService>().InstancePerLifetimeScope();
             builder.RegisterType<JwtHandler>().As<IJwtHandler>().SingleInstance();
-
+ 
             // poczytać o tym
             // builder.RegisterAssemblyTypes();
 
@@ -123,9 +127,20 @@ namespace Evento.Api
 
             app.UseHttpsRedirection();
 
+            SeedDate(app);
             app.UseAuthentication();
             app.UseMvc();
             applicationLifetime.ApplicationStopped.Register(() => Container.Dispose());
+
+        }
+        private void SeedDate(IApplicationBuilder appBuilder)
+        {
+            var settings = appBuilder.ApplicationServices.GetService<IOptions<AppSettings>>();
+            if (settings.Value.SeedDate)
+            {
+                var dateInitializer = appBuilder.ApplicationServices.GetService<IDateInitializer>();
+                dateInitializer.SeedAsync();
+            }
         }
     }
 }
